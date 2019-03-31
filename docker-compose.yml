@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  db:
+    image: amazon/dynamodb-local
+    networks:
+      - backend
+  lb:
+    image: traefik
+    command: --api --docker
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - backend
+      - web
+  server:
+    build: .
+    networks:
+      - backend
+    environment:
+      - PAYMENTS_BIND_ADDRESS=0.0.0.0:8000
+      - PAYMENTS_DB_ENDPOINT=http://db:8000
+    labels:
+      - "traefik.frontend.rule=Host:payments.docker.localhost"
+      - "traefik.docker.network=backend"
+      - "traefik.port=8000"
+
+networks:
+  backend:
+    driver: bridge
+    internal: true
+  web:
+    driver: bridge

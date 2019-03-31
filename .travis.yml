@@ -1,0 +1,11 @@
+language: go
+
+services:
+  - docker
+
+install:
+  - export GOBIN="$GOPATH/bin"
+  - GO111MODULE=on go get -v golang.org/x/lint/golint
+
+script:
+  - GO111MODULE=on make ci

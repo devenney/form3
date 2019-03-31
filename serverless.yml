@@ -1,0 +1,82 @@
+service: payments
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: f3.devenney.io
+    createRoute53Record: true
+
+provider:
+  name: aws
+  runtime: go1.x
+  region: eu-west-1
+
+  package:
+    exclude:
+      ./**
+    include:
+      - ./bin/**
+
+  environment:
+    DYNAMODB_TABLE: payments
+    PAYMENTS_API_URL: https://f3.devenney.io
+    PAYMENTS_DB_ENDPOINT: http://dynamodb.eu-west-1.amazonaws.com
+    PAYMENTS_ENV: PROD
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:CreateTable
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+functions:
+  list:
+    handler: bin/list
+    events:
+      - http:
+          path: listPayments
+          method: get
+  get:
+    handler: bin/get
+    events:
+      - http:
+          path: getPayment/{id}
+          method: get
+          request:
+            paths:
+              id: true
+  add:
+    handler: bin/add
+    events:
+      - http:
+          path: addPayment/{id}
+          method: post
+          request:
+            paths:
+              id: true
+  update:
+    handler: bin/update
+    events:
+      - http:
+          path: updatePayment/{id}
+          method: put
+          request:
+            paths:
+              id: true
+  delete:
+    handler: bin/delete
+    events:
+      - http:
+          path: deletePayment/{id}
+          method: delete
+          request:
+            paths:
+              id: true
