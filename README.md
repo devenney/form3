@@ -28,6 +28,14 @@ DELETE  https://f3.devenney.io/deletePayment/{id}
 
 ## Testing
 
+### Pact Testing
+
+Although writing a real client was out of scope, a mock client is implemented in `handlers/pact/pact_test.go` (commented out) to produce a Pact file on demand. This file is fed into a real provider test which ensures `/getPayments` returns an expected response.
+
+For these tests to function, the Pact CLI must be installed as detailed [on the release page](https://github.com/pact-foundation/pact-ruby-standalone/releases/tag/v1.64.0).
+
+### DynamoDB Local
+
 Testing requires a local instance of DynamoDB, bound to port 8080 (to prevent clashes with the default server port). This is most easily achieved using the official Docker container:
 
 ```shell

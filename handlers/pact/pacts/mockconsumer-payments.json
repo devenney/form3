@@ -1,0 +1,249 @@
+{
+  "consumer": {
+    "name": "MockConsumer"
+  },
+  "provider": {
+    "name": "Payments"
+  },
+  "interactions": [
+    {
+      "description": "A request to get 09a8fe0d-e239-4aff-8098-7923eadd0b98",
+      "providerState": "Payment 09a8fe0d-e239-4aff-8098-7923eadd0b98 exists",
+      "request": {
+        "method": "GET",
+        "path": "/getPayment/09a8fe0d-e239-4aff-8098-7923eadd0b98",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "attributes": {
+            "amount": "\"string\"",
+            "beneficiary_party": {
+              "account_name": "\"string\"",
+              "account_number": "\"string\"",
+              "account_number_code": "\"string\"",
+              "account_type": 1,
+              "address": "\"string\"",
+              "bank_id": 1,
+              "bank_id_code": "\"string\"",
+              "name": "\"string\""
+            },
+            "charges_information": {
+              "bearer_code": "\"string\"",
+              "receiver_charges_amount": "\"string\"",
+              "receiver_charges_currency": "\"string\"",
+              "sender_charges": [
+                {
+                  "amount": "\"string\"",
+                  "currency": "\"string\""
+                }
+              ]
+            },
+            "currency": "\"string\"",
+            "debtor_party": {
+              "account_name": "\"string\"",
+              "account_number": "\"string\"",
+              "account_number_code": "\"string\"",
+              "address": "\"string\"",
+              "bank_id": "\"string\"",
+              "bank_id_code": "\"string\"",
+              "name": "\"string\""
+            },
+            "end_to_end_reference": "\"string\"",
+            "fx": {
+              "contract_reference": "\"string\"",
+              "exchange_rate": "\"string\"",
+              "original_amount": "\"string\"",
+              "original_currency": "\"string\""
+            },
+            "numeric_reference": "\"string\"",
+            "payment_id": "\"string\"",
+            "payment_purpose": "\"string\"",
+            "payment_scheme": "\"string\"",
+            "payment_type": "\"string\"",
+            "processing_date": "\"string\"",
+            "reference": "\"string\"",
+            "scheme_payment_sub_type": "\"string\"",
+            "scheme_payment_type": "\"string\"",
+            "sponsor_party": {
+              "account_name": "\"string\"",
+              "account_number": "\"string\"",
+              "bank_id": "\"string\"",,
+              "bank_id_code": "\"string\""
+            }
+          },
+          "id": "\"string\"",
+          "organisation_id": "\"string\"",
+          "type": "\"string\"",
+          "version": 1
+        },
+        "matchingRules": {
+          "$.body.attributes.amount": {
+            "match": "type"
+          },
+          "$.body.attributes.beneficiary_party.account_name": {
+            "match": "type"
+          },
+          "$.body.attributes.beneficiary_party.account_number": {
+            "match": "type"
+          },
+          "$.body.attributes.beneficiary_party.account_number_code": {
+            "match": "type"
+          },
+          "$.body.attributes.beneficiary_party.account_type": {
+            "match": "type"
+          },
+          "$.body.attributes.beneficiary_party.address": {
+            "match": "type"
+          },
+          "$.body.attributes.beneficiary_party.bank_id": {
+            "match": "type"
+          },
+          "$.body.attributes.beneficiary_party.bank_id_code": {
+            "match": "type"
+          },
+          "$.body.attributes.beneficiary_party.name": {
+            "match": "type"
+          },
+          "$.body.attributes.charges_information.bearer_code": {
+            "match": "type"
+          },
+          "$.body.attributes.charges_information.receiver_charges_amount": {
+            "match": "type"
+          },
+          "$.body.attributes.charges_information.receiver_charges_currency": {
+            "match": "type"
+          },
+          "$.body.attributes.charges_information.sender_charges": {
+            "min": 1
+          },
+          "$.body.attributes.charges_information.sender_charges[*].*": {
+            "match": "type"
+          },
+          "$.body.attributes.charges_information.sender_charges[*].amount": {
+            "match": "type"
+          },
+          "$.body.attributes.charges_information.sender_charges[*].currency": {
+            "match": "type"
+          },
+          "$.body.attributes.currency": {
+            "match": "type"
+          },
+          "$.body.attributes.debtor_party.account_name": {
+            "match": "type"
+          },
+          "$.body.attributes.debtor_party.account_number": {
+            "match": "type"
+          },
+          "$.body.attributes.debtor_party.account_number_code": {
+            "match": "type"
+          },
+          "$.body.attributes.debtor_party.account_type": {
+            "match": "type"
+          },
+          "$.body.attributes.debtor_party.address": {
+            "match": "type"
+          },
+          "$.body.attributes.debtor_party.bank_id": {
+            "match": "type"
+          },
+          "$.body.attributes.debtor_party.bank_id_code": {
+            "match": "type"
+          },
+          "$.body.attributes.debtor_party.name": {
+            "match": "type"
+          },
+          "$.body.attributes.end_to_end_reference": {
+            "match": "type"
+          },
+          "$.body.attributes.fx.contract_reference": {
+            "match": "type"
+          },
+          "$.body.attributes.fx.exchange_rate": {
+            "match": "type"
+          },
+          "$.body.attributes.fx.original_amount": {
+            "match": "type"
+          },
+          "$.body.attributes.fx.original_currency": {
+            "match": "type"
+          },
+          "$.body.attributes.numeric_reference": {
+            "match": "type"
+          },
+          "$.body.attributes.payment_id": {
+            "match": "type"
+          },
+          "$.body.attributes.payment_purpose": {
+            "match": "type"
+          },
+          "$.body.attributes.payment_scheme": {
+            "match": "type"
+          },
+          "$.body.attributes.payment_type": {
+            "match": "type"
+          },
+          "$.body.attributes.processing_date": {
+            "match": "type"
+          },
+          "$.body.attributes.reference": {
+            "match": "type"
+          },
+          "$.body.attributes.scheme_payment_sub_type": {
+            "match": "type"
+          },
+          "$.body.attributes.scheme_payment_type": {
+            "match": "type"
+          },
+          "$.body.attributes.sponsor_party.account_name": {
+            "match": "type"
+          },
+          "$.body.attributes.sponsor_party.account_number": {
+            "match": "type"
+          },
+          "$.body.attributes.sponsor_party.account_number_code": {
+            "match": "type"
+          },
+          "$.body.attributes.sponsor_party.account_type": {
+            "match": "type"
+          },
+          "$.body.attributes.sponsor_party.address": {
+            "match": "type"
+          },
+          "$.body.attributes.sponsor_party.bank_id": {
+            "match": "type"
+          },
+          "$.body.attributes.sponsor_party.bank_id_code": {
+            "match": "type"
+          },
+          "$.body.attributes.sponsor_party.name": {
+            "match": "type"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.organisation_id": {
+            "match": "type"
+          },
+          "$.body.type": {
+            "match": "type"
+          },
+          "$.body.version": {
+            "match": "type"
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}

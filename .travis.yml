@@ -6,6 +6,9 @@ services:
 install:
   - export GOBIN="$GOPATH/bin"
   - GO111MODULE=on go get -v golang.org/x/lint/golint
+  - curl -LO https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.64.0/pact-1.64.0-linux-x86_64.tar.gz
+  - tar xzf pact-1.64.0-linux-x86_64.tar.gz
+  - export PATH="$PATH:$PWD/pact/bin"
 
 script:
   - GO111MODULE=on make ci
