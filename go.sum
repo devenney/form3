@@ -21,6 +21,8 @@ github.com/fsnotify/fsnotify v1.4.7 h1:IXs+QLmnXW2CcXuY+8Mzv/fWEsPGWxqefPtCP5CnV
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/githubnemo/CompileDaemon v1.0.0 h1:F4nrVyPOxva6gJIw320fwfaFaPl8ZuEk95RZOy9Q4eM=
 github.com/githubnemo/CompileDaemon v1.0.0/go.mod h1:lE3EXX1td33uhlkFLp+ImWY9qBaoRcDeA3neh4m8ic0=
+github.com/go-validator/validator v0.0.0-20180514200540-135c24b11c19 h1:+213K32fC1Ki8tIa4n3bsI2GyhSxYo5+Ru8rBgBJsi4=
+github.com/go-validator/validator v0.0.0-20180514200540-135c24b11c19/go.mod h1:Z6CPSxOS2fR8d1fAFPKiF/q3d7pRDmLowc7I1l0f4Oc=
 github.com/gofrs/uuid v3.2.0+incompatible h1:y12jRkkFxsd7GpqdSZ+/KCs/fJbqpEXSGd4+jfEaewE=
 github.com/gofrs/uuid v3.2.0+incompatible/go.mod h1:b2aQJv3Z4Fp6yNu3cdSllBxTCLRxnplIgP/c0N/04lM=
 github.com/google/uuid v1.1.1 h1:Gkbcsh/GbpXz7lPftLA3P6TYMwjCLYm83jiFQZF/3gY=

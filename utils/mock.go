@@ -24,6 +24,10 @@ func InsertMockData(path string) (paymentList payments.PaymentList, err error) {
 
 	// Upsert each payment
 	for _, payment := range paymentList.Data {
+		if err := payment.Validate(); err != nil {
+			log.Fatalf("Mock payment [%s] vailed validation: %v", payment.ID, err)
+		}
+
 		err = payment.Upsert()
 		if err != nil {
 			return

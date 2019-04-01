@@ -6,6 +6,7 @@ require (
 	github.com/aws/aws-sdk-go v1.19.5
 	github.com/axw/gocov v0.0.0-20170322000131-3a69a0d2a4ef // indirect
 	github.com/fatih/color v1.7.0 // indirect
+	github.com/go-validator/validator v0.0.0-20180514200540-135c24b11c19
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.7.0
 	github.com/guregu/dynamo v1.2.1 // indirect

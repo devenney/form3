@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/devenney/form3/database"
@@ -45,7 +46,8 @@ func ListPaymentsHandler(w http.ResponseWriter, r *http.Request) {
 
 		err = dynamodbattribute.UnmarshalMap(result, &payment)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("Unable to unmarshal Dynamo item: %v", err.Error()), http.StatusInternalServerError)
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			log.Printf("Unable to unmarshal Dynamo item: %v", err.Error())
 		}
 
 		paymentList.Data = append(paymentList.Data, payment)
@@ -58,7 +60,8 @@ func ListPaymentsHandler(w http.ResponseWriter, r *http.Request) {
 
 	output, err := json.Marshal(paymentList)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal payment list: %v", err), http.StatusInternalServerError)
+		log.Printf("Unable to marshal payment list: %v", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
@@ -71,7 +74,8 @@ func GetPaymentHandler(w http.ResponseWriter, r *http.Request) {
 
 	payment, err := payments.Get(vars["id"])
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error: %v", err), http.StatusInternalServerError)
+		log.Printf("Error: %v", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
@@ -84,10 +88,12 @@ func GetPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	// Marshal our object
 	output, err := json.Marshal(payment)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal payment: %v", err), http.StatusInternalServerError)
+		log.Printf("Unable to marshal payment: %v", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, string(output))
 }
 
@@ -103,14 +109,16 @@ func AddPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	// Read HTTP body
 	payload, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, "Unable to read request body", http.StatusBadRequest)
+		log.Printf("Unable to read request body: %v", err)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	// Unmarshal body to a Payment
 	err = json.Unmarshal(payload, &payment)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to Unmarshal payload: %v", err), http.StatusBadRequest)
+		log.Printf("Unable to Unmarshal payload: %v", err)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
@@ -118,20 +126,29 @@ func AddPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	if payment.ID != "" {
 		_, err = uuid.Parse(payment.ID)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("Payment ID was not a valid UUID: %s, %v", payment.ID, err), http.StatusBadRequest)
+			log.Printf("Payment ID was not a valid UUID: %s, %v", payment.ID, err)
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
+	}
+
+	// Validate
+	if err := payment.Validate(); err != nil {
+		log.Printf("Failed to validate Payment: %v", err)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
 	}
 
 	// Insert
 	err = payment.Upsert()
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error upserting Payment: %v", err), http.StatusInternalServerError)
+		log.Printf("Error upserting Payment: %v", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
+	w.WriteHeader(http.StatusCreated)
 	// Return the ID
-	// FIXME(devenney): Should be JSON.
 	fmt.Fprintf(w, payment.ID)
 }
 
@@ -144,7 +161,8 @@ func UpdatePaymentHandler(w http.ResponseWriter, r *http.Request) {
 
 	payment, err := payments.Get(vars["id"])
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error: %v", err), http.StatusInternalServerError)
+		log.Printf("Error: %v", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
@@ -159,14 +177,16 @@ func UpdatePaymentHandler(w http.ResponseWriter, r *http.Request) {
 	// Read HTTP body
 	payload, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, "Unable to read request body", http.StatusBadRequest)
+		log.Printf("Unable to read request body: %v", err)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	// Unmarshal body to a Payment
 	err = json.Unmarshal(payload, &updatedPayment)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to Unmarshal payload: %v", err), http.StatusBadRequest)
+		log.Printf("Unable to Unmarshal payload: %v", err)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
@@ -179,19 +199,28 @@ func UpdatePaymentHandler(w http.ResponseWriter, r *http.Request) {
 	// If the user did specify the ID in the body, make sure
 	// it matches the path variable.
 	if payment.ID != updatedPayment.ID {
-		http.Error(w, fmt.Sprintf("Provided payment ID (%s) did not match payment to be updated (%s)", updatedPayment.ID, payment.ID), http.StatusBadRequest)
+		log.Printf("Provided payment ID (%s) did not match payment to be updated (%s)", payment.ID, updatedPayment.ID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	// Validate
+	if err := payment.Validate(); err != nil {
+		log.Printf("Failed to validate Payment: %v", err)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	// Update
 	err = updatedPayment.Upsert()
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error upserting Payment: %v", err), http.StatusInternalServerError)
+		log.Printf("Error upserting Payment: %v", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	// Return the ID
-	// FIXME(devenney): Should be JSON.
 	fmt.Fprintf(w, payment.ID)
 }
 
@@ -201,7 +230,8 @@ func DeletePaymentHandler(w http.ResponseWriter, r *http.Request) {
 
 	payment, err := payments.Get(vars["id"])
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error: %v", err), http.StatusInternalServerError)
+		log.Printf("Error: %v", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
@@ -214,9 +244,11 @@ func DeletePaymentHandler(w http.ResponseWriter, r *http.Request) {
 	// Delete
 	err = payment.Delete()
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to delete payment: %v", err), http.StatusInternalServerError)
+		log.Printf("Failed to delete payment: %v", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	return
 }

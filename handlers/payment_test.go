@@ -50,7 +50,7 @@ func addPayment(ts *httptest.Server, payment *payments.Payment) (string, error) 
 		return "", err
 	}
 
-	if status := resp.StatusCode; status != http.StatusOK {
+	if status := resp.StatusCode; status != http.StatusCreated {
 		return "", fmt.Errorf("Response has wrong status code: %d, expected %d", resp.StatusCode, http.StatusOK)
 	}
 
@@ -208,7 +208,63 @@ func TestPaymentLifecycle(t *testing.T) {
 	defer ts.Close()
 
 	payment := payments.Payment{
-		PaymentType: "BACS",
+		Attributes: payments.PaymentAttributes{
+			Amount: "100.0",
+			BeneficiaryParty: payments.PaymentParty{
+				AccountName:       "test",
+				AccountNumber:     "test",
+				AccountNumberCode: "test",
+				BankID:            123,
+				BankIDCode:        "test",
+				Name:              "test",
+			},
+			ChargesInformation: payments.PaymentChargesInformation{
+				BearerCode:              "SHAR",
+				ReceiverChargesAmount:   "1.00",
+				ReceiverChargesCurrency: "USD",
+				SenderCharges: []payments.PaymentCharges{{
+					Amount:   "5.00",
+					Currency: "GBP",
+				}},
+			},
+			Currency: "GBP",
+			DebtorParty: payments.PaymentParty{
+				AccountName:       "test",
+				AccountNumber:     "test",
+				AccountNumberCode: "test",
+				BankID:            567,
+				BankIDCode:        "test",
+				Name:              "test",
+			},
+			EndToEndReference: "ref",
+			Fx: payments.PaymentForeignExchange{
+				ContractReference: "test",
+				ExchangeRate:      "test",
+				OriginalAmount:    "test",
+				OriginalCurrency:  "test",
+			},
+			NumericReference:     123,
+			PaymentID:            "test",
+			PaymentPurpose:       "test",
+			PaymentScheme:        "test",
+			PaymentType:          "test",
+			ProcessingDate:       "test",
+			Reference:            "ref",
+			SchemePaymentSubType: "test",
+			SchemePaymentType:    "test",
+			SponsorParty: payments.PaymentParty{
+				AccountName:       "test",
+				AccountNumber:     "test",
+				AccountNumberCode: "test",
+				BankID:            567,
+				BankIDCode:        "test",
+				Name:              "test",
+			},
+		},
+		ID:             "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec99",
+		OrganisationID: "4ee3a8d8-ca7b-4290-a52c-dd5b6165ec99",
+		PaymentType:    "Payment",
+		Version:        0,
 	}
 
 	id, err := addPayment(ts, &payment)
@@ -216,6 +272,14 @@ func TestPaymentLifecycle(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	_, err = getPayment(ts, id)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	payment.PaymentType = "BACS"
+
+	err = updatePayment(ts, &payment, id)
 	updatedPayment, err := getPayment(ts, id)
 	if err != nil {
 		t.Fatal(err)
@@ -224,10 +288,4 @@ func TestPaymentLifecycle(t *testing.T) {
 	if updatedPayment.PaymentType != "BACS" {
 		t.Fatalf("Response PaymentType was wrong: %s, expected: %s", updatedPayment.PaymentType, "BACS")
 	}
-
-	newPayment := payments.Payment{
-		PaymentType: "FT",
-	}
-
-	err = updatePayment(ts, &newPayment, id)
 }
